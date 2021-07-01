@@ -20,20 +20,18 @@ def aplicar_filtro_pasabanda(amplitudes, fs):
     return signal.lfilter(n, 1, amplitudes)
 
 def aplicar_filtro_derivativo(input):
-  
     h_d = [-1 / 8, -2 / 8, 0, 2 / 8, 1 / 8]
     return signal.convolve(input, h_d)
 
 def aplicar_alisado(input):
-    
     salida = [0 for i in range(len(input))]
 
     for i in range(len(input)):
         salida[i] = input[i] ** 2
-    return salida;
+    return salida
 
 def aplicar_filtro_media_movil(input):
-   
+
     N = 25
     salida = [0] * len(input)
 
@@ -41,7 +39,7 @@ def aplicar_filtro_media_movil(input):
         for i in range(N - 1):
             salida[n] = salida[n] + input[n - i]
         salida[n] = salida[n] / N
-    return salida;
+    return salida
 
 def graficar_resultados(muestra, amplitudes, resultado_filtro, resultado_filtro_derivativo, resultado_alisado, resultado_media_movil, title):
     n = len(muestra)
@@ -85,20 +83,48 @@ def graficar_resultados(muestra, amplitudes, resultado_filtro, resultado_filtro_
     # número de muestras
     cantidad_muestras = 1500
 
-    graficar(1, muestra, amplitudes, "ECG", min(amplitudes) - 0.01, (max(amplitudes) + 0.01), cantidad_muestras,"numero muestras [n]", "amplitud [mV]", title)
+    graficar_ecg(amplitudes, cantidad_muestras, muestra, title)
 
-    graficar(2, muestra, resultado_filtro, "Filtro Pasabanda", min(resultado_filtro) - 0.01, (max(resultado_filtro) + 0.01), cantidad_muestras, "numero muestras [n]", "amplitud [mV]", title)
+    graficar_filtro_pasa_banda(cantidad_muestras, muestra, resultado_filtro, title)
 
-    graficar(3, muestra2, resultado_filtro_derivativo, "Filtro Derivativo", min(resultado_filtro_derivativo) - 0.01, (max(resultado_filtro_derivativo) + 0.01), cantidad_muestras, "numero muestras [n]", "amplitud [mV]", title)
+    graficar_filtro_derivativo(cantidad_muestras, muestra2, resultado_filtro_derivativo, title)
 
-    graficar(4, muestra2, resultado_alisado, "Alisado", min(resultado_alisado) - 0.01, (max(resultado_alisado) + 0.01), cantidad_muestras, "numero muestras [n]", "amplitud [mV]", title)
+    graficar_alisado(cantidad_muestras, muestra2, resultado_alisado, title)
 
-    graficar(5, muestra2, resultado_media_movil, "Media móvil", min(resultado_media_movil) - 0.001, (max(resultado_media_movil) + 0.001), cantidad_muestras, "numero muestras [n]", "amplitud [mV]", title)
+    graficar_media_movil(cantidad_muestras, muestra2, resultado_media_movil, title)
+
     plt.plot([0, cantidad_muestras], [umbral, umbral], 'g')
     plt.plot([inicio, inicio], [min(resultado_media_movil) - 0.001, (max(resultado_media_movil) + 0.001)], 'g')
     plt.plot([fin, fin], [min(resultado_media_movil) - 0.001, (max(resultado_media_movil) + 0.001)], 'g')
 
     return muestra_2
+
+
+def graficar_media_movil(cantidad_muestras, muestra2, resultado_media_movil, title):
+    graficar(5, muestra2, resultado_media_movil, "Media móvil", min(resultado_media_movil) - 0.001,
+             (max(resultado_media_movil) + 0.001), cantidad_muestras, "numero muestras [n]", "amplitud [mV]", title)
+
+
+def graficar_alisado(cantidad_muestras, muestra2, resultado_alisado, title):
+    graficar(4, muestra2, resultado_alisado, "Alisado", min(resultado_alisado) - 0.01, (max(resultado_alisado) + 0.01),
+             cantidad_muestras, "numero muestras [n]", "amplitud [mV]", title)
+
+
+def graficar_filtro_derivativo(cantidad_muestras, muestra2, resultado_filtro_derivativo, title):
+    graficar(3, muestra2, resultado_filtro_derivativo, "Filtro Derivativo", min(resultado_filtro_derivativo) - 0.01,
+             (max(resultado_filtro_derivativo) + 0.01), cantidad_muestras, "numero muestras [n]", "amplitud [mV]",
+             title)
+
+
+def graficar_filtro_pasa_banda(cantidad_muestras, muestra, resultado_filtro, title):
+    graficar(2, muestra, resultado_filtro, "Filtro Pasabanda", min(resultado_filtro) - 0.01,
+             (max(resultado_filtro) + 0.01), cantidad_muestras, "numero muestras [n]", "amplitud [mV]", title)
+
+
+def graficar_ecg(amplitudes, cantidad_muestras, muestra, title):
+    graficar(1, muestra, amplitudes, "ECG", min(amplitudes) - 0.01, (max(amplitudes) + 0.01), cantidad_muestras,
+             "numero muestras [n]", "amplitud [mV]", title)
+
 
 def procesar_señal(muestra, amplitudes, fs, title) :
     resultado_filtro = aplicar_filtro_pasabanda(amplitudes, fs);

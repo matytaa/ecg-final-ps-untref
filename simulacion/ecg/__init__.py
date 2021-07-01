@@ -1,10 +1,8 @@
-import json
-
 import numpy as np
 import matplotlib.pyplot as plt
 import wfdb
 
-from final.algoritmo_pan_tompkins import procesar_señal, graficar
+from simulacion.ecg.algoritmo_pan_tompkins import procesar_señal, graficar
 
 
 def importar_archivo(s):
@@ -37,6 +35,7 @@ def frecuencia_cardiaca(input, fetal, title):
     # Grafico de la frecuencia media. Marco en el gráfico la frecuencia mímina y máxima que se considera bradicardia o taquicardia
     x = [x for x in range(len(frecuencia_cardiaca))]
     graficar(6, x, frecuencia_cardiaca, "Frecuencia cardíaca latido por latido", 30, 200, len(frecuencia_cardiaca), "n° latido", "Frecuencia [lat/min]", title)
+
     plt.plot([0, len(frecuencia_cardiaca)], [limite_inferior, limite_inferior], 'r')
     plt.plot([0, len(frecuencia_cardiaca)], [limite_superior, limite_superior], 'r')
     freq_media = np.mean(frecuencia_cardiaca)
@@ -60,7 +59,10 @@ def frecuencia_cardiaca(input, fetal, title):
 
 if __name__ == "__main__":
 
-    archivos_ecg = [{"title":"ECG Normal","filename":"111", "fetal":0}, {"title":"ECG Arritmia Taquicardia","filename":"233","fetal":0}, {"title":"ECG Arritmia Bradicardia","filename":"231","fetal":0}, {"title":"ECG Fetal","filename":"a02","fetal":1}];
+    archivos_ecg = [{"title":"ECG Normal","filename":"111", "fetal":0},
+                    {"title":"ECG Arritmia Taquicardia","filename":"233","fetal":0},
+                    {"title":"ECG Arritmia Bradicardia","filename":"231","fetal":0},
+                    {"title":"ECG Fetal","filename":"a02","fetal":1}];
     for i in range(len(archivos_ecg)):
         muestra, amplitudes,fs=importar_archivo(archivos_ecg[i]["filename"])
         salida = procesar_señal(muestra, amplitudes, fs, archivos_ecg[i]["title"])
